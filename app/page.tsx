@@ -1,7 +1,9 @@
+import { Button } from "./_components/ui/button";
+
 export default function Home() {
   return (
-    <div className="flex w-screen items-center justify-center">
-      <h1 className="p-5 text-red-500">Hellow world</h1>
+    <div className="flex w-screen items-center justify-center pt-4">
+      <Button>Hellow world</Button>
     </div>
   );
 }
