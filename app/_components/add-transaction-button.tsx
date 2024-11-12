@@ -19,6 +19,7 @@ import { Button } from "./ui/button";
 import { DatePicker } from "./ui/date-picker";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -63,8 +64,10 @@ const formSchema = z.object({
   }),
 });
 
+type FormSchema = z.infer<typeof formSchema>;
+
 const AddTransactionButton = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: "",
@@ -76,10 +79,23 @@ const AddTransactionButton = () => {
     },
   });
 
-  const onSubmit = () => {};
+  interface UpsertTransactionDialogProps {
+    isOpen: boolean;
+    defaultValues?: FormSchema;
+    transactionId?: string;
+    setIsOpen: (isOpen: boolean) => void;
+  }
+
+  const onSubmit = async (data: FormSchema) => {};
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        if (open) {
+          form.reset();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="rounded-full font-bold">
           Adicionar transação
@@ -216,7 +232,9 @@ const AddTransactionButton = () => {
               )}
             />
             <DialogFooter>
-              <Button variant="outline">Cancelar</Button>
+              <DialogClose asChild>
+                <Button variant="outline">Cancelar</Button>
+              </DialogClose>
               <Button type="submit">Adicionar</Button>
             </DialogFooter>
           </form>
