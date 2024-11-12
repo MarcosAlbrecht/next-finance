@@ -4,7 +4,7 @@ import { Button } from "@/app/_components/ui/button";
 import {
   TRANSACTION_CATEGORY_LABELS,
   TRANSACTION_PAYMENT_METHOD_LABELS,
-} from "@/app/_constants/transaction";
+} from "@/app/_constants/transactions";
 import { Transaction, TransactionCategory } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { PencilIcon, TrashIcon } from "lucide-react";
