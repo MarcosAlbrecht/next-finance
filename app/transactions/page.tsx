@@ -12,7 +12,10 @@ export default async function TransactionsPage() {
     redirect("/login");
   }
   //acessar as transaçoes do banco de dados
-  const transactions = await db.transaction.findMany({ where: { userId } });
+  const transactions = await db.transaction.findMany({
+    where: { userId },
+    orderBy: { date: "asc" },
+  });
   return (
     <>
       <NavBar />
