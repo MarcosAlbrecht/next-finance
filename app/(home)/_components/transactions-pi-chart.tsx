@@ -1,0 +1,79 @@
+"use client";
+
+import { Card, CardContent } from "@/app/_components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/app/_components/ui/chart";
+import { TransactionType } from "@prisma/client";
+import { Pie, PieChart } from "recharts";
+
+const chartConfig = {
+  [TransactionType.INVESTMENT]: {
+    label: "Investido",
+    color: "#FFFFFF",
+  },
+  [TransactionType.DEPOSIT]: {
+    label: "Receita",
+    color: "#55B02E",
+  },
+  [TransactionType.EXPENSE]: {
+    label: "Despesas",
+    color: "#E93030",
+  },
+} satisfies ChartConfig;
+
+interface TransactionPieChartPorps {
+  depositsTotal: number;
+  investimentsTotal: number;
+  expensesTotal: number;
+}
+
+export default function TransactionPieChart({
+  depositsTotal,
+  expensesTotal,
+  investimentsTotal,
+}: TransactionPieChartPorps) {
+  const chartData = [
+    {
+      type: TransactionType.DEPOSIT,
+      amount: depositsTotal,
+      fill: "#55B02E",
+    },
+    {
+      type: TransactionType.EXPENSE,
+      amount: expensesTotal,
+      fill: "#E93030",
+    },
+    {
+      type: TransactionType.INVESTMENT,
+      amount: investimentsTotal,
+      fill: "#FFFFFF",
+    },
+  ];
+  return (
+    <Card className="flex flex-col">
+      <CardContent className="flex-1 pb-0">
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square max-h-[250px]"
+        >
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie
+              data={chartData}
+              dataKey="amount"
+              nameKey="type"
+              innerRadius={60}
+            />
+          </PieChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}

@@ -2,8 +2,10 @@ import { auth } from "@clerk/nextjs/server";
 import { getMonth, isMatch } from "date-fns";
 import { redirect } from "next/navigation";
 import NavBar from "../_components/navbar";
+import { getDashboard } from "../_data/get-dashboard";
 import SummaryCards from "./_components/summary-cards";
 import TimeSelect from "./_components/time-select";
+import TransactionPieChart from "./_components/transactions-pi-chart";
 
 interface HomeProps {
   searchParams: {
@@ -13,12 +15,12 @@ interface HomeProps {
 
 export default async function Home({ searchParams: { month } }: HomeProps) {
   const { userId } = await auth();
-  let updatedMonth = month;
+
   if (!userId) {
     redirect("/login");
   }
-
-  updatedMonth = month;
+  let updatedMonth =
+    month !== undefined ? month : (new Date().getMonth() + 1).toString();
 
   if (updatedMonth.length < 2 && updatedMonth.length > 0) {
     updatedMonth = "0" + updatedMonth;
@@ -31,6 +33,7 @@ export default async function Home({ searchParams: { month } }: HomeProps) {
     const monthIndex = getMonth(new Date()) + 1;
     redirect("?month=" + monthIndex.toString());
   }
+  const dashboard = await getDashboard(updatedMonth);
   return (
     <>
       <NavBar />
@@ -39,7 +42,10 @@ export default async function Home({ searchParams: { month } }: HomeProps) {
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <TimeSelect />
         </div>
-        <SummaryCards month={updatedMonth} />
+        <SummaryCards month={updatedMonth} {...dashboard} />
+        <div className="grid grid-cols-3 grid-rows-1 gap-6">
+          <TransactionPieChart {...dashboard} />
+        </div>
       </div>
     </>
   );
