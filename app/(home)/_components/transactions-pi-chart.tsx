@@ -7,8 +7,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/app/_components/ui/chart";
+import { TransactionPercentagePerType } from "@/app/_data/get-dashboard/types";
 import { TransactionType } from "@prisma/client";
+import { PiggyBankIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { Pie, PieChart } from "recharts";
+import PercentagemItem from "./percentage-item";
 
 const chartConfig = {
   [TransactionType.INVESTMENT]: {
@@ -26,6 +29,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface TransactionPieChartPorps {
+  typesPercentage: TransactionPercentagePerType;
   depositsTotal: number;
   investimentsTotal: number;
   expensesTotal: number;
@@ -35,6 +39,7 @@ export default function TransactionPieChart({
   depositsTotal,
   expensesTotal,
   investimentsTotal,
+  typesPercentage,
 }: TransactionPieChartPorps) {
   const chartData = [
     {
@@ -54,7 +59,7 @@ export default function TransactionPieChart({
     },
   ];
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col p-12">
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
@@ -73,6 +78,24 @@ export default function TransactionPieChart({
             />
           </PieChart>
         </ChartContainer>
+
+        <div className="space-y-3">
+          <PercentagemItem
+            icon={<TrendingUpIcon className="text-primary" size={16} />}
+            title="Receita"
+            value={typesPercentage[TransactionType.DEPOSIT]}
+          />
+          <PercentagemItem
+            icon={<TrendingDownIcon className="text-red-500" size={16} />}
+            title="Receita"
+            value={typesPercentage[TransactionType.EXPENSE]}
+          />
+          <PercentagemItem
+            icon={<PiggyBankIcon size={16} />}
+            title="Receita"
+            value={typesPercentage[TransactionType.INVESTMENT]}
+          />
+        </div>
       </CardContent>
     </Card>
   );
