@@ -3,16 +3,14 @@
 import { Button } from "@/app/_components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { loadStripe } from "@stripe/stripe-js";
-import { Link } from "lucide-react";
+import Link from "next/link";
 import { createStripeCheckout } from "../_actions/create_stripe_checkout";
 
 const AcquirePlanButton = () => {
   const { user } = useUser();
   const handleAcquirePlanClick = async () => {
     const { sessionId } = await createStripeCheckout();
-
     if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      console.info("chave publica: ");
       throw new Error("Stripe publishable key not found");
     }
     const stripe = await loadStripe(
@@ -24,6 +22,7 @@ const AcquirePlanButton = () => {
     await stripe.redirectToCheckout({ sessionId });
   };
   const hasPremiumPlan = user?.publicMetadata.subscriptionPlan == "premium";
+
   if (hasPremiumPlan) {
     return (
       <Button className="w-full rounded-full font-bold" variant="link">
