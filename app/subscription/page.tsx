@@ -1,8 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { endOfMonth, startOfMonth } from "date-fns";
 import { CheckIcon, XIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import NavBar from "../_components/navbar";
 import { Card, CardContent, CardHeader } from "../_components/ui/card";
+import { db } from "../_lib/prisma";
 import AcquirePlanButton from "./_components/acquire_plan_button";
 
 const page = async () => {
@@ -10,7 +12,16 @@ const page = async () => {
   if (!userId) {
     redirect("/login");
   }
-
+  const user = await clerkClient().users.getUser(userId);
+  const currentMonthTransactions = await db.transaction.count({
+    where: {
+      userId,
+      createdAt: {
+        gte: startOfMonth(new Date()),
+        lt: endOfMonth(new Date()),
+      },
+    },
+  });
   return (
     <>
       <NavBar />
@@ -31,7 +42,9 @@ const page = async () => {
             <CardContent className="space-y-6 py-8">
               <div className="flex items-center gap-2">
                 <CheckIcon className="text-primary" />
-                <p>Apenas 10 transações por mês (7/10)</p>
+                <p>
+                  Apenas 10 transações por mês ({currentMonthTransactions}/10)
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <XIcon />
