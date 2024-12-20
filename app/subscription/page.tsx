@@ -1,10 +1,9 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { endOfMonth, startOfMonth } from "date-fns";
 import { CheckIcon, XIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import NavBar from "../_components/navbar";
 import { Card, CardContent, CardHeader } from "../_components/ui/card";
-import { db } from "../_lib/prisma";
+import { getCurrentMonthTransactions } from "../_data/get_current-month-transaction";
 import AcquirePlanButton from "./_components/acquire_plan_button";
 
 const page = async () => {
@@ -13,15 +12,8 @@ const page = async () => {
     redirect("/login");
   }
   const user = await clerkClient().users.getUser(userId);
-  const currentMonthTransactions = await db.transaction.count({
-    where: {
-      userId,
-      createdAt: {
-        gte: startOfMonth(new Date()),
-        lt: endOfMonth(new Date()),
-      },
-    },
-  });
+  const currentMonthTransactions = await getCurrentMonthTransactions();
+  const hasPremiumPlan = user.publicMetadata.subscriptionPlan == "premium";
   return (
     <>
       <NavBar />
