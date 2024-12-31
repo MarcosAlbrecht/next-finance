@@ -35,7 +35,7 @@ export default async function SummaryCards({
       />
 
       {/* outros cards */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid gap-6 sm:grid-cols-3">
         <SummaryCard
           icon={<PiggyBankIcon size={16} />}
           title="Investido"

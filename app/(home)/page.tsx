@@ -2,6 +2,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { getMonth, isMatch } from "date-fns";
 import { redirect } from "next/navigation";
 import Navbar from "../_components/navbar";
+import { ScrollArea } from "../_components/ui/scroll-area";
 import { canUserAddTransaction } from "../_data/can-user-add-transaction";
 import { getDashboard } from "../_data/get-dashboard";
 import AiReportButton from "./_components/ai-report-button";
@@ -41,12 +42,12 @@ export default async function Home({ searchParams: { month } }: HomeProps) {
   const userCanAddTransaction = await canUserAddTransaction();
   const user = await clerkClient().users.getUser(userId);
   return (
-    <>
+    <ScrollArea className="rounded-md border">
       <Navbar />
-      <div className="flex h-full flex-col space-y-6 overflow-hidden p-6">
-        <div className="flex justify-between">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <div className="flex items-center gap-3">
+      <div className="flex h-full flex-col space-y-4 overflow-auto p-4 sm:space-y-6 sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
+          <h1 className="text-lg font-bold sm:text-2xl">Dashboard</h1>
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             <AiReportButton
               month={month}
               hasPremiumPlan={
@@ -56,23 +57,30 @@ export default async function Home({ searchParams: { month } }: HomeProps) {
             <TimeSelect />
           </div>
         </div>
-        <div className="grid h-full grid-cols-[2fr,1fr] gap-6 overflow-hidden">
-          <div className="flex flex-col gap-6 overflow-hidden">
+
+        {/* Configuração da grade para responsividade */}
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[2fr,1fr] xl:gap-6">
+          {/* Coluna principal */}
+          <div className="flex flex-col gap-4 md:gap-6">
             <SummaryCards
               month={month}
               {...dashboard}
               userCanAddTransaction={userCanAddTransaction}
             />
-            <div className="grid h-full grid-cols-3 grid-rows-1 gap-6 overflow-hidden">
+            <div className="grid grid-cols-1 gap-4 md:gap-6 xl:grid-cols-3">
               <TransactionPieChart {...dashboard} />
               <ExpensesPerCategory
                 expensesPerCategory={dashboard.totalExpensePerCategory}
               />
             </div>
           </div>
-          <LastTransactions lastTransactions={dashboard.lastTransactions} />
+
+          {/* LastTransactions será jogado para baixo em telas menores */}
+          <div className="xl:col-start-2 xl:row-start-auto">
+            <LastTransactions lastTransactions={dashboard.lastTransactions} />
+          </div>
         </div>
       </div>
-    </>
+    </ScrollArea>
   );
 }
