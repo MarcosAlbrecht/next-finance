@@ -3,16 +3,23 @@ import { auth } from "@clerk/nextjs/server";
 import { TransactionType } from "@prisma/client";
 import { TotalExpensePerCategory, TransactionPercentagePerType } from "./types";
 
-export const getDashboard = async (month: string) => {
+export const getDashboard = async (month: string, year: number) => {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
   }
+
+  const numericMonth = parseInt(month, 10);
+
+  // Calculando o primeiro e último dia do mês
+  const firstDayOfMonth = new Date(year, numericMonth - 1, 1);
+  const lastDayOfMonth = new Date(year, numericMonth, 0); // Último dia do mês
+
   const where = {
     userId,
     date: {
-      gte: new Date(`2024-${month}-01`),
-      lt: new Date(`2024-${month}-31`),
+      gte: firstDayOfMonth,
+      lt: lastDayOfMonth,
     },
   };
 

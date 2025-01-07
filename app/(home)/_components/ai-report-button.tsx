@@ -28,7 +28,8 @@ const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
   const handleGenerateReportClick = async () => {
     try {
       setReportIsLoading(true);
-      const aiReport = await generateAiReport({ month });
+      const year = new Date().getFullYear().toString();
+      const aiReport = await generateAiReport({ month, year });
       console.log({ aiReport });
       setReport(aiReport);
     } catch (error) {

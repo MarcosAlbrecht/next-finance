@@ -38,7 +38,8 @@ export default async function Home({ searchParams: { month } }: HomeProps) {
     const monthIndex = getMonth(new Date()) + 1;
     redirect("?month=" + monthIndex.toString());
   }
-  const dashboard = await getDashboard(updatedMonth);
+  const year = new Date().getFullYear();
+  const dashboard = await getDashboard(updatedMonth, year);
   const userCanAddTransaction = await canUserAddTransaction();
   const user = await clerkClient().users.getUser(userId);
   return (
