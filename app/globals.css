@@ -79,3 +79,14 @@ body {
     @apply h-full bg-background text-foreground;
   }
 }
+
+/* Remove as setas de controle dos inputs tipo number */
+input[type="number"].no-arrows::-webkit-inner-spin-button,
+input[type="number"].no-arrows::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"].no-arrows {
+  -moz-appearance: textfield; /* Para navegadores baseados no Firefox */
+}

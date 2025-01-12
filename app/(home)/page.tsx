@@ -1,6 +1,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { getMonth, isMatch } from "date-fns";
 import { redirect } from "next/navigation";
+import { userHasPremiumfunction } from "../_actions/user-haspremium";
 import Navbar from "../_components/navbar";
 import { ScrollArea } from "../_components/ui/scroll-area";
 import { canUserAddTransaction } from "../_data/can-user-add-transaction";
@@ -14,16 +15,17 @@ import TransactionPieChart from "./_components/transactions-pi-chart";
 
 interface HomeProps {
   searchParams: {
-    month: string;
+    month?: string;
   };
 }
 
-export default async function Home({ searchParams: { month } }: HomeProps) {
+export default async function Home({ searchParams }: HomeProps) {
   const { userId } = await auth();
 
   if (!userId) {
     redirect("/login");
   }
+  const month = searchParams.month || new Date().toISOString().slice(0, 7);
   let updatedMonth =
     month !== undefined ? month : (new Date().getMonth() + 1).toString();
 
@@ -42,6 +44,7 @@ export default async function Home({ searchParams: { month } }: HomeProps) {
   const dashboard = await getDashboard(updatedMonth, year);
   const userCanAddTransaction = await canUserAddTransaction();
   const user = await clerkClient().users.getUser(userId);
+  const haspremium = await userHasPremiumfunction(userId);
   return (
     <ScrollArea className="rounded-md border">
       <Navbar />
@@ -67,6 +70,7 @@ export default async function Home({ searchParams: { month } }: HomeProps) {
               month={month}
               {...dashboard}
               userCanAddTransaction={userCanAddTransaction}
+              hasPremium={haspremium}
             />
             <div className="grid grid-cols-1 gap-4 md:gap-6 xl:grid-cols-3">
               <TransactionPieChart {...dashboard} />

@@ -28,6 +28,7 @@ const AditTransactionButton = ({ transaction }: EditTransactionButtonProps) => {
         setIsOpen={setDialogIsOpen}
         defaultValues={{ ...transaction, amount: Number(transaction.amount) }}
         transactionId={transaction.id}
+        hasPremium={false}
       />
     </>
   );

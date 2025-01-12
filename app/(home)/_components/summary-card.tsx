@@ -8,6 +8,7 @@ interface SummaryCardProps {
   amount: number;
   size?: "small" | "large";
   userCanAddTransaction?: boolean;
+  hasPremium: boolean;
 }
 
 export default function SummaryCard({
@@ -16,6 +17,7 @@ export default function SummaryCard({
   amount,
   size = "small",
   userCanAddTransaction,
+  hasPremium,
 }: SummaryCardProps) {
   return (
     <Card className={`${size === "large" ? "bg-white bg-opacity-5" : ""}`}>
@@ -37,7 +39,10 @@ export default function SummaryCard({
           }).format(amount)}
         </p>
         {size === "large" && (
-          <AddTransactionButton userCanAddTransaction={userCanAddTransaction} />
+          <AddTransactionButton
+            userCanAddTransaction={userCanAddTransaction}
+            hasPremium={hasPremium}
+          />
         )}
       </CardContent>
     </Card>

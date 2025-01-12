@@ -7,6 +7,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { useEffect } from "react";
 import { upsertTransaction } from "../_actions/upsert-transactions";
 import {
   TRANSACTION_CATEGORY_OPTIONS,
@@ -48,6 +49,7 @@ interface UpsertTransactionDialogProps {
   defaultValues?: FormSchema;
   transactionId?: string;
   setIsOpen: (isOpen: boolean) => void;
+  hasPremium: boolean;
 }
 
 const formSchema = z.object({
@@ -73,6 +75,7 @@ const formSchema = z.object({
   date: z.date({
     required_error: "A data é obrigatória.",
   }),
+  installments: z.number({}),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -82,6 +85,7 @@ const UpsertTransactionDialog = ({
   defaultValues,
   transactionId,
   setIsOpen,
+  hasPremium,
 }: UpsertTransactionDialogProps) => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -92,9 +96,11 @@ const UpsertTransactionDialog = ({
       name: "",
       paymentMethod: TransactionPaymentMethod.CASH,
       type: TransactionType.EXPENSE,
+      installments: 1,
     },
   });
 
+  const paymentMethod = form.watch("paymentMethod");
   const onSubmit = async (data: FormSchema) => {
     try {
       await upsertTransaction({ ...data, id: transactionId });
@@ -106,6 +112,12 @@ const UpsertTransactionDialog = ({
   };
 
   const isUpdate = Boolean(transactionId);
+
+  useEffect(() => {
+    if (paymentMethod !== TransactionPaymentMethod.CREDIT_CARD) {
+      form.setValue("installments", 1); // Redefine o valor para 1 quando não for cartão de crédito
+    }
+  }, [paymentMethod, form]);
 
   return (
     <Dialog
@@ -243,6 +255,55 @@ const UpsertTransactionDialog = ({
                 </FormItem>
               )}
             />
+            {hasPremium &&
+              paymentMethod === TransactionPaymentMethod.CREDIT_CARD && (
+                <FormField
+                  control={form.control}
+                  name="installments"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Parcelas</FormLabel>
+                      <div className="flex items-center space-x-2">
+                        {/* Botão de decrementar */}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() =>
+                            field.onChange(Math.max(Number(field.value) - 1, 1))
+                          }
+                        >
+                          -
+                        </Button>
+
+                        {/* Campo de entrada */}
+                        <Input
+                          type="number"
+                          value={field.value}
+                          onChange={(e) => {
+                            const newValue = parseInt(e.target.value, 10);
+                            field.onChange(
+                              isNaN(newValue) ? 1 : Math.max(newValue, 1),
+                            );
+                          }}
+                          className="no-arrows text-center"
+                        />
+
+                        {/* Botão de incrementar */}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() =>
+                            field.onChange(Number(field.value) + 1)
+                          }
+                        >
+                          +
+                        </Button>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             <FormField
               control={form.control}
               name="date"

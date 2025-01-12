@@ -13,6 +13,7 @@ interface SummaryCard {
   investimentsTotal: number;
   expensesTotal: number;
   userCanAddTransaction?: boolean;
+  hasPremium: boolean;
 }
 
 export default async function SummaryCards({
@@ -21,6 +22,7 @@ export default async function SummaryCards({
   expensesTotal,
   investimentsTotal,
   userCanAddTransaction,
+  hasPremium,
 }: SummaryCard) {
   return (
     <div className="space-y-6">
@@ -32,6 +34,7 @@ export default async function SummaryCards({
         amount={balance}
         size="large"
         userCanAddTransaction={userCanAddTransaction}
+        hasPremium={hasPremium}
       />
 
       {/* outros cards */}
@@ -40,17 +43,20 @@ export default async function SummaryCards({
           icon={<PiggyBankIcon size={16} />}
           title="Investido"
           amount={investimentsTotal}
+          hasPremium={hasPremium}
         />
         <SummaryCard
           icon={<TrendingUpIcon size={16} className="text-primary" />}
           title="Receita"
           amount={depositsTotal}
+          hasPremium={hasPremium}
         />
 
         <SummaryCard
           icon={<TrendingDownIcon size={16} className="text-red-500" />}
           title="Despesas"
           amount={expensesTotal}
+          hasPremium={hasPremium}
         />
       </div>
     </div>

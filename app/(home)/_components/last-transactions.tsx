@@ -60,6 +60,13 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
                     year: "numeric",
                   })}
                 </p>
+                {transaction.installments != null &&
+                  transaction.installments > 1 && (
+                    <p className="text-sm text-muted-foreground">
+                      parcela: {transaction.installment} /{" "}
+                      {transaction.installments}
+                    </p>
+                  )}
               </div>
             </div>
             <p className={`text-sm font-bold ${getAmountColor(transaction)}`}>

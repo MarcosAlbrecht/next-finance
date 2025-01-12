@@ -13,10 +13,12 @@ import UpsertTransactionDialog from "./upsert-transaction-dialog";
 
 interface AddTransactionButtonProps {
   userCanAddTransaction?: boolean;
+  hasPremium: boolean;
 }
 
 const AddTransactionButton = ({
   userCanAddTransaction,
+  hasPremium,
 }: AddTransactionButtonProps) => {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
 
@@ -43,6 +45,7 @@ const AddTransactionButton = ({
       <UpsertTransactionDialog
         isOpen={dialogIsOpen}
         setIsOpen={setDialogIsOpen}
+        hasPremium={hasPremium}
       />
     </>
   );
