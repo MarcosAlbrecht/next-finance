@@ -88,7 +88,7 @@ const UpsertTransactionDialog = ({
   transactionId,
   setIsOpen,
 }: UpsertTransactionDialogProps) => {
-  const { accountType, setAccountType } = useUserContext();
+  const { accountType } = useUserContext();
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues ?? {
